@@ -173,8 +173,7 @@ Def_parameter() {
       break
     fi
   done
-
-AddUser_SS
+  AddUser_SS
   Iptables
   if [ "${PM}" == 'yum' ]; then
     pkgList="wget unzip openssl-devel gcc swig autoconf libtool libevent automake make curl curl-devel zlib-devel perl perl-devel cpio expat-devel gettext-devel git asciidoc xmlto c-ares-devel pcre-devel udns-devel libev-devel"
@@ -218,7 +217,9 @@ Install_SS_python() {
 Install_SS_libev() {
   src_url=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.3.4/shadowsocks-libev-3.3.4.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-  src_url=https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.16.6.tar.gz && Download_src
+#  https://github.com/jedisct1/libsodium/releases/download/1.0.18-RELEASE/libsodium-1.0.18.tar.gz
+#  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.16.0-apache.tgz && Download_src
+  src_url=https://github.com/ARMmbed/mbedtls/archive/mbedtls-2.23.0.tar.gz && Download_src
   if [ ! -e "/usr/local/lib/libsodium.la" ]; then
     tar xzf libsodium-${libsodium_ver}.tar.gz
     pushd libsodium-${libsodium_ver} > /dev/null
@@ -227,8 +228,8 @@ Install_SS_libev() {
     popd > /dev/null
     rm -rf libsodium-${libsodium_ver}
   fi
-  tar xzf mbedtls-2.16.6.tar.gz
-  pushd mbedtls-mbedtls-2.16.6 > /dev/null
+  tar xzf mbedtls-2.23.0.tar.gz
+  pushd mbedtls-mbedtls-2.23.0 > /dev/null
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd > /dev/null
@@ -249,7 +250,7 @@ Install_SS_libev() {
         /bin/cp ../init.d/SS-libev-init-CentOS /etc/init.d/shadowsocks
         chkconfig --add shadowsocks
         chkconfig shadowsocks on
-    elif [ "${PM}" == 'apt-get' ]; then
+      elif [ "${PM}" == 'apt-get' ]; then
         /bin/cp ../init.d/SS-libev-init-Ubuntu /etc/init.d/shadowsocks
         update-rc.d shadowsocks defaults
       fi
@@ -270,7 +271,8 @@ Uninstall_SS() {
       break
     fi
   done
-if [ "${uninstall_flag}" == 'y' ]; then
+
+  if [ "${uninstall_flag}" == 'y' ]; then
     [ -n "$(ps -ef | grep -v grep | grep -iE "ssserver|ss-server")" ] && service shadowsocks stop
     [ -e /lib/systemd/system/shadowsocks.service ] && { systemctl disable shadowsocks; rm -f /lib/systemd/system/shadowsocks.service; }
     [ "${PM}" == 'yum' ] && chkconfig --del shadowsocks
@@ -297,16 +299,18 @@ if [ "${uninstall_flag}" == 'y' ]; then
     fi
   fi
 }
+
 Config_SS() {
   [ ! -d "/etc/shadowsocks" ] && mkdir /etc/shadowsocks
   [ "${ss_option}" == '1' ] && cat > /etc/shadowsocks/config.json << EOF
 {
     "server":"0.0.0.0",
+    "mode":"tcp_and_udp",
     "server_port":${SS_port},
     "local_port":1080,
     "password":"${SS_password}",
     "timeout":300,
-    "method":"chacha20-ietf-poly1305"
+    "method":"aes-256-cfb"
 }
 EOF
 
@@ -329,6 +333,7 @@ AddUser_Config_SS() {
   [ ! -e /etc/shadowsocks/config.json ] && { echo "${CFAILURE}SS is not installed! ${CEND}"; exit 1; }
   [ -z "$(grep \"${SS_port}\" /etc/shadowsocks/config.json)" ] && sed -i "s@\"port_password\":{@\"port_password\":{\n\t\"${SS_port}\":\"${SS_password}\",@" /etc/shadowsocks/config.json || { echo "${CWARNING}This port is already in /etc/shadowsocks/config.json${CEND}"; exit 1; }
 }
+
 Print_User_SS() {
   printf "
 Your Server IP: ${CMSG}${PUBLIC_IPADDR}${CEND}
@@ -336,7 +341,7 @@ Your Server Port: ${CMSG}${SS_port}${CEND}
 Your Password: ${CMSG}${SS_password}${CEND}
 Your Local IP: ${CMSG}127.0.0.1${CEND}
 Your Local Port: ${CMSG}1080${CEND}
-Your Encryption Method: ${CMSG}chacha20-ietf-poly1305${CEND}
+Your Encryption Method: ${CMSG}aes-256-cfb${CEND}
 "
 }
 

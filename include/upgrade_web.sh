@@ -323,7 +323,7 @@ Upgrade_Tomcat() {
     /bin/cp ${tomcat_install_dir}/bin/setenv.sh apache-tomcat-${NEW_tomcat_ver}/bin/
     /bin/cp -R ${tomcat_install_dir}/conf/vhost apache-tomcat-${NEW_tomcat_ver}/conf/
     chmod +x apache-tomcat-${NEW_tomcat_ver}/bin/*.sh
-    [[ -d ${tomcat_install_dir}_bak && -d ${tomcat_install_dir} ]] && rm -rf ${tomcat_install_dir}._bak
+    [[ -d ${tomcat_install_dir}_bak && -d ${tomcat_install_dir} ]] && rm -rf ${tomcat_install_dir}_bak
     service tomcat stop
     /bin/mv ${tomcat_install_dir}{,_bak}
     /bin/mv apache-tomcat-${NEW_tomcat_ver} ${tomcat_install_dir} && chown -R ${run_user}.${run_user} ${tomcat_install_dir}

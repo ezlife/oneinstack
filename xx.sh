@@ -215,7 +215,7 @@ Install_SS_python() {
 }
 
 Install_SS_libev() {
-  src_url=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.3.4/shadowsocks-libev-3.3.4.tar.gz && Download_src
+  src_url=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v3.3.5/shadowsocks-libev-3.3.5.tar.gz && Download_src
   src_url=http://mirrors.linuxeye.com/oneinstack/src/libsodium-${libsodium_ver}.tar.gz && Download_src
 #  https://github.com/jedisct1/libsodium/releases/download/1.0.18-RELEASE/libsodium-1.0.18.tar.gz
 #  src_url=http://mirrors.linuxeye.com/oneinstack/src/mbedtls-2.16.0-apache.tgz && Download_src
@@ -233,8 +233,8 @@ Install_SS_libev() {
   make SHARED=1 CFLAGS=-fPIC
   make DESTDIR=/usr install
   popd > /dev/null
-  tar xzf shadowsocks-libev-3.3.4.tar.gz
-  pushd shadowsocks-libev-3.3.4 > /dev/null
+  tar xzf shadowsocks-libev-3.3.5.tar.gz
+  pushd shadowsocks-libev-3.3.5 > /dev/null
   make clean
   ./configure
   make -j ${THREAD} && make install

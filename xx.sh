@@ -116,7 +116,7 @@ Iptables() {
   if [ -n "${SS_Already_port}" ]; then
     let SS_Default_port="${SS_Already_port}+1"
   else
-    SS_Default_port=9001
+    SS_Default_port=8388
   fi
 
   while :; do echo
@@ -310,7 +310,7 @@ Config_SS() {
     "local_port":1080,
     "password":"${SS_password}",
     "timeout":300,
-    "method":"aes-256-cfb"
+    "method":"xchacha20-ietf-poly1305"
 }
 EOF
 
@@ -323,7 +323,7 @@ EOF
     "${SS_port}":"${SS_password}"
     },
     "timeout":300,
-    "method":"aes-256-cfb",
+    "method":"xchacha20-ietf-poly1305",
     "fast_open":false
 }
 EOF
@@ -341,7 +341,7 @@ Your Server Port: ${CMSG}${SS_port}${CEND}
 Your Password: ${CMSG}${SS_password}${CEND}
 Your Local IP: ${CMSG}127.0.0.1${CEND}
 Your Local Port: ${CMSG}1080${CEND}
-Your Encryption Method: ${CMSG}aes-256-cfb${CEND}
+Your Encryption Method: ${CMSG}xchacha20-ietf-poly1305${CEND}
 "
 }
 
